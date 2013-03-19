@@ -4,11 +4,12 @@ jQuery ->
     ###
         jQuery extension to highlight something inside the element.
     ###
+    id = toId(term)
     parts = @contents().filter(-> @nodeType is 3 and regex.test(@nodeValue))
     parts.replaceWith ->
       (@nodeValue or "").replace regex, (match) ->
-        "<label class=\"#{term}\">#{match}</label>"
-    $terms = @find(".#{term}")
+        "<code class=\"#{id}\">#{match}</code>"
+    $terms = @find(".#{id}")
     $terms.mouseover (event) ->
       $pop = popByTerm(term)
       $pop.position()
@@ -25,18 +26,19 @@ jQuery ->
     res = {}
     for key,val of dic
       res[key] =
-        id: "_"+key
         term: key
         description: val
         regex: new RegExp(key, "gi")
     res
 
-  popByTerm = (term)-> $("#pop_"+term)
+  toId = (term)->"pop_"+term.replace(" ", "_")
+
+  popByTerm = (term)-> $("#pop_"+toId(term))
 
   createPopus = (gloss) ->
     doc = $("body")
     for key, val of gloss
-      pid = "pop_"+val.term
+      pid = "pop_"+toId(val.term)
       doc.append "<div class='popup' id=\"#{pid}\"><b>#{val.term}:</b> #{val.description}</div>"
       $("#"+pid).hide()
 
